@@ -61,10 +61,7 @@ This Ansible role is designed to set up a Redis high availability configuration 
 
 These variables are used within the Ansible role to configure and manage the Redis instances across the specified hosts. By defining these variables in the `vars/main.yml` file, it becomes easier to maintain and modify the configuration as needed without directly modifying the playbook files.
 
-## Configuring Proxy Settings with Ansible
-
-To configure proxy settings using Ansible, follow these steps:
-
+## Configuring Proxy Settings
 1. **Check if Proxy.sh file exists**:
    - Use Ansible's `stat` module to check if the `proxy.sh` file exists in the directory `/etc/profile.d/`.
    - Register the result in the variable `proxy_file_stat`.
