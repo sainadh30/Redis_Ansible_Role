@@ -1,38 +1,34 @@
-Role Name
-=========
+# Redis High Availability Ansible Role
 
-A brief description of the role goes here.
+## Overview
+This Ansible role is designed to set up a Redis high availability configuration using Ansible. It automates the process of installing, configuring, and managing Redis services across multiple nodes.
 
-Requirements
-------------
+## Directory Structure
+- `redis_ansible_role/`
+  - `hosts`: Contains details of the Redis hosts.
+    ```
+    [redis]
+    redis_master ansible_host=172.31.81.82
+    redis_slave1 ansible_host=172.31.28.179
+    redis_slave2 ansible_host=172.31.34.174
+    ```
+  - `lampstack.yml`: Ansible playbook file to install, configure, and manage Redis services.
+    ```yaml
+    ---
+    - name: Install Configure and Manage Redis Services
+      hosts: all
+      become: yes
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
-
-Role Variables
---------------
-
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
-
-Dependencies
-------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
-
-Example Playbook
-----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
       roles:
-         - { role: username.rolename, x: 42 }
+        - redis
+    ```
+  - `roles/`: Directory containing Ansible roles.
+    - `redis/`: Redis role directory created using the `ansible-galaxy` command.
 
-License
--------
-
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+## Usage
+1. Ensure you have Ansible installed on your system.
+2. Clone or download this repository.
+3. Navigate to the `redis_ansible_role` directory.
+4. Edit the `hosts` file to include the correct IP addresses of your Redis master and slave nodes.
+5. Execute the `lampstack.yml` playbook using the command:
+ansible-playbook -i hosts lampstack.yml
