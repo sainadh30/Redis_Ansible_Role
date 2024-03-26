@@ -148,6 +148,42 @@ Add the following tasks to the `create_proxy.yml` file to configure proxy settin
 
 These tasks collectively ensure the proper configuration of proxy settings across relevant files and directories.
 
+## Configuring Redis Sentinel with Ansible
+
+To configure Redis Sentinel using Ansible, follow these steps:
+
+### Step 1: Create the `tasks/sentinel.yml` File
+
+Create a YAML file named `sentinel.yml` within your Ansible playbook directory.
+
+### Step 2: Add Redis Sentinel Configuration Tasks
+
+Add the following tasks to the `sentinel.yml` file to configure Redis Sentinel:
+
+1. **Install Redis Sentinel**:
+   - Use Ansible's `apt` module to install the `redis-sentinel` package.
+   - Set the state to `present` to ensure the package is installed.
+
+2. **Enable Redis Sentinel service to start on boot**:
+   - Use Ansible's `service` module to enable the `redis-sentinel` service to start automatically on boot.
+   - Set `enabled: yes` to enable the service.
+
+3. **Start Redis Sentinel service**:
+   - Use Ansible's `service` module to start the `redis-sentinel` service.
+   - Set the state to `started` to ensure the service is running.
+
+4. **Check Redis Sentinel service status**:
+   - Use Ansible's `systemd` module to check the status of the `redis-sentinel` service.
+   - Set the state to `started` to retrieve the service status.
+
+5. **Update Redis package cache**:
+   - Use Ansible's `apt` module to update the Redis package cache.
+
+These tasks collectively ensure the proper installation and configuration of Redis Sentinel, along with updating the Redis package cache when necessary.
+
+
+
+
 
 
 
