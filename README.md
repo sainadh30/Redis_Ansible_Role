@@ -241,6 +241,12 @@ This Ansible playbook automates the configuration of Redis Sentinel by modifying
 ### 6. Restart Redis service:
    - Finally, this step restarts the Redis service (`redis-server`) to apply the new configuration settings.
 
+# Validation
+
+## Run Redis CLI to connect to the Redis server.
+````bash
+redis-cli
+
 
 
 
