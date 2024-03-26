@@ -132,3 +132,36 @@ This Ansible playbook automates the process of setting up the Redis repository, 
 
 ### 10. Set Redis Package to Remain Fixed at v7.2.4 (Disable auto-update):
     - Finally, this step ensures that the Redis package remains fixed at version 7.2.4 by setting it to "hold," which disables automatic updates for the Redis package. This ensures stability and prevents unexpected changes to the Redis version.
+
+## Installing and Configuring Redis Sentinel
+
+This Ansible playbook automates the installation and configuration of Redis Sentinel, a distributed system designed to monitor and manage Redis instances. Below are the steps involved:
+
+### 1. Install Redis Sentinel:
+   - This step uses the `ansible.builtin.apt` module to install the Redis Sentinel package (`redis-sentinel`). Redis Sentinel is a high availability solution for Redis, providing monitoring, automatic failover, and configuration management.
+
+### 2. Enable Redis Sentinel service to start on boot:
+   - After installation, this step ensures that the Redis Sentinel service (`redis-sentinel`) is enabled to start automatically on system boot. Enabling the service ensures continuous monitoring and management of Redis instances even after system restarts.
+
+### 3. Start Redis Sentinel service:
+   - Once enabled, this step starts the Redis Sentinel service using the `ansible.builtin.service` module. Starting the service is essential to initiate the monitoring and failover mechanisms provided by Redis Sentinel.
+
+### 4. Check Redis Sentinel service status:
+   - This step verifies the status of the Redis Sentinel service using the `ansible.builtin.systemd` module. It ensures that the Redis Sentinel service is successfully started and running as expected.
+
+### 5. Update Redis package cache:
+   - Finally, this step updates the package cache for Redis using the `ansible.builtin.apt` module with the `update_cache` option set to `yes`. Updating the package cache ensures that the latest information about available Redis packages is fetched from the repositories.
+
+## How to Use:
+1. **Prerequisites:**
+   - Ensure Ansible is installed on the control node.
+
+2. **Steps:**
+   - Copy the playbook containing the tasks into an Ansible playbook file.
+   - Run the playbook using the command `ansible-playbook <playbook_filename>`.
+
+## Note:
+- This playbook streamlines the installation and configuration of Redis Sentinel, enhancing the reliability and availability of Redis instances.
+- Users may need to customize the playbook according to their specific environment or configuration requirements.
+
+
