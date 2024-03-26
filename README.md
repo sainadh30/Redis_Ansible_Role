@@ -23,7 +23,7 @@ This Ansible role is designed to set up a Redis high availability configuration 
         - redis
     ```
   - `roles/`: Directory containing Ansible roles.
-    - `redis/`: Redis role directory created using the `ansible-galaxy` command.
+    - `redis/`: Redis role directory created using the `ansible-galaxy init redis` command.
 
 ## Usage
 1. Ensure you have Ansible installed on your system.
@@ -32,3 +32,27 @@ This Ansible role is designed to set up a Redis high availability configuration 
 4. Edit the `hosts` file to include the correct IP addresses of your Redis master and slave nodes.
 5. Execute the `lampstack.yml` playbook using the command:
 ansible-playbook -i hosts lampstack.yml
+
+## Directory Structure
+- `redis_ansible_role/`
+  - `roles/`: Directory containing Ansible roles.
+    - `redis/`: Redis role directory created using the `ansible-galaxy` command.
+      - `vars/`: Directory containing variable files.
+        - `main.yml`: Defines variables for Redis role.
+
+## Explanation of Variables in `vars/main.yml`
+
+### Proxy Variables
+- **PROXY_ADDRESS**: Specifies the proxy server address to be used for internet access. In this example, `http://172.168.10.28:3128` is provided as the proxy server address.
+
+### Redis Hosts
+- **redis_master**: Defines the IP address of the Redis master node.
+- **redis_slave1**: Defines the IP address of the first Redis slave node.
+- **redis_slave2**: Defines the IP address of the second Redis slave node.
+
+### Redis Configuration
+- **redis_master_password**: Sets the default password for accessing the Redis master. In this example, `"redis@123"` is used as the default password.
+- **redis_port**: Specifies the port number on which Redis will listen for connections. The default port `6379` is provided here.
+
+These variables are used within the Ansible role to configure and manage the Redis instances across the specified hosts. By defining these variables in the `vars/main.yml` file, it becomes easier to maintain and modify the configuration as needed without directly modifying the playbook files.
+
