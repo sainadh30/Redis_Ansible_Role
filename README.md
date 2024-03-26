@@ -152,6 +152,31 @@ This Ansible playbook automates the installation and configuration of Redis Sent
 ### 5. Update Redis package cache:
    - Finally, this step updates the package cache for Redis using the `ansible.builtin.apt` module with the `update_cache` option set to `yes`. Updating the package cache ensures that the latest information about available Redis packages is fetched from the repositories.
 
+## Configuring Redis Master Instance
+
+This Ansible playbook automates the configuration of a Redis master instance by modifying its configuration file (`redis.conf`). Below are the steps involved:
+
+### 1. Check if redis.conf file exists:
+   - This step ensures the existence of the Redis configuration file (`/etc/redis/redis.conf`) on the designated Redis master server. The file is essential for configuring Redis server settings.
+
+### 2. Store current block content of /etc/redis/redis.conf:
+   - If the Redis configuration file exists, this step retrieves its current content using the `ansible.builtin.shell` module. The content is stored for reference and potential modification.
+
+### 3. Uncomment and edit Redis configurations:
+   - This step utilizes the `ansible.builtin.lineinfile` module to uncomment and modify specific configurations within the Redis configuration file (`/etc/redis/redis.conf`). It ensures that essential configurations like binding IP, password requirements, and master authentication are appropriately set.
+
+### 4. Store the new block content of /etc/redis/redis.conf:
+   - After modifying the Redis configuration file, this step retrieves the updated content using the `ansible.builtin.shell` module. The updated content is stored for verification and backup purposes.
+
+### 5. Backup Redis configuration file:
+   - If changes are made to the Redis configuration file, this step creates a backup of the original configuration file (`/etc/redis/redis.conf`) with a timestamp appended to its filename. The backup ensures the ability to revert to the previous configuration if needed.
+
+### 6. Restart Redis service:
+   - Finally, this step restarts the Redis service (`redis-server`) on the Redis master server using the `ansible.builtin.service` module. Restarting the service applies the new configuration settings.
+
+
+
+
 
 
 
