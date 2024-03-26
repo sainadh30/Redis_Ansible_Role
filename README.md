@@ -61,7 +61,7 @@ This Ansible role is designed to set up a Redis high availability configuration 
 
 These variables are used within the Ansible role to configure and manage the Redis instances across the specified hosts. By defining these variables in the `vars/main.yml` file, it becomes easier to maintain and modify the configuration as needed without directly modifying the playbook files.
 
-#### Configuring Proxy Settings with Ansible
+## Configuring Proxy Settings with Ansible
 
 To configure proxy settings using Ansible, follow these steps:
 
@@ -99,7 +99,7 @@ To configure proxy settings using Ansible, follow these steps:
 
 These tasks collectively ensure the proper configuration of proxy settings across relevant files and directories.
 
-#### Setting Up Redis Repository and Installing Redis
+## Setting Up Redis Repository and Installing Redis
 
 This Ansible playbook automates the process of setting up the Redis repository, installing Redis, and ensuring its service is running. Below are the steps involved:
 
