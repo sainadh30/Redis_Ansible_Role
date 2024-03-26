@@ -61,17 +61,9 @@ This Ansible role is designed to set up a Redis high availability configuration 
 
 These variables are used within the Ansible role to configure and manage the Redis instances across the specified hosts. By defining these variables in the `vars/main.yml` file, it becomes easier to maintain and modify the configuration as needed without directly modifying the playbook files.
 
-## Configuring Proxy Settings with Ansible
+#### Configuring Proxy Settings with Ansible
 
 To configure proxy settings using Ansible, follow these steps:
-
-### Step 1: Create the `tasks/proxy.yml` File
-
-Create a YAML file named `proxy.yml` within your Ansible playbook directory.
-
-### Step 2: Add Proxy Configuration Tasks
-
-Add the following tasks to the `proxy.yml` file to configure proxy settings:
 
 1. **Check if Proxy.sh file exists**:
    - Use Ansible's `stat` module to check if the `proxy.sh` file exists in the directory `/etc/profile.d/`.
@@ -107,286 +99,36 @@ Add the following tasks to the `proxy.yml` file to configure proxy settings:
 
 These tasks collectively ensure the proper configuration of proxy settings across relevant files and directories.
 
+#### Setting Up Redis Repository and Installing Redis
 
-Copy code
-# Installing Redis with Ansible
+This Ansible playbook automates the process of setting up the Redis repository, installing Redis, and ensuring its service is running. Below are the steps involved:
 
-To install Redis using Ansible, follow these steps:
+### 1. Check if Redis Repository GPG Key file exists:
+   - This step ensures that the Redis Repository GPG Key file exists in the designated path (`/usr/share/keyrings/redis-archive-keyring.gpg`). The GPG key is essential for verifying the authenticity of packages from the Redis repository.
 
-### Step 1: Check Redis Repository GPG Key
+### 2. Add Redis Repository GPG Key:
+   - If the Redis Repository GPG Key file doesn't exist, this step downloads the key from `https://packages.redis.io/gpg` and saves it to `/usr/share/keyrings/redis-archive-keyring.gpg`. Having the GPG key ensures secure installation and updates from the Redis repository.
 
-Check if the Redis Repository GPG Key file exists:
+### 3. Check if Redis Repository file exists:
+   - This step verifies whether the Redis Repository file exists in `/etc/apt/sources.list.d/redis.list`. This file contains information about the Redis repository, including its URL and other configuration details.
 
-```yaml
-- name: Check if Redis Repository GPG Key file exists
-  ansible.builtin.stat:
-    path: /usr/share/keyrings/redis-archive-keyring.gpg
-  register: redis_key_stat
-Step 2: Add Redis Repository GPG Key
-If the Redis Repository GPG Key does not exist, add it:
+### 4. Add Redis Repository to System:
+   - If the Redis Repository file doesn't exist, this step adds the Redis repository to the system's apt sources list (`/etc/apt/sources.list.d/redis.list`). It includes the URL of the repository along with the GPG key for package verification.
 
-- name: Add Redis Repository GPG Key
-  ansible.builtin.shell:
-    cmd: curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
-  when: not redis_key_stat.stat.exists
-Step 3: Check Redis Repository File
-Check if the Redis Repository file exists:
+### 5. Update Redis Repository:
+   - After adding the Redis repository, this step updates the package lists from the repositories using the `apt update` command. It ensures that the system has the latest information about available packages from the Redis repository.
 
-- name: Check if Redis Repository file exists
-  ansible.builtin.stat:
-    path: /etc/apt/sources.list.d/redis.list
-  register: redis_repo_stat
-Step 4: Add Redis Repository to System
-If the Redis Repository file does not exist, add it to the system:
+### 6. Install Redis:
+   - Once the repository is configured and updated, this step installs the Redis server (`redis-server`) package using the `apt` package manager. Redis server is the core component required for running Redis.
 
-- name: Add Redis Repository to System
-  ansible.builtin.shell:
-    cmd: echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
-  when: not redis_repo_stat.stat.exists
-Step 5: Update Redis Repository
-Update the Redis repository:
+### 7. Start and Enable Redis service:
+   - After installation, this step ensures that the Redis service (`redis-server`) is started and enabled. Starting the service ensures that Redis is up and running, while enabling it ensures that Redis starts automatically on system boot.
 
-- name: Update Redis Repository
-  ansible.builtin.apt:
-    update_cache: yes
-Step 6: Install Redis
-Install Redis using APT:
+### 8. Check Status of Redis Service:
+   - This step checks the status of the Redis service using the `systemctl status redis-server.service` command. It provides information about whether the Redis service is active, its PID, and any errors if encountered.
 
-- name: Install Redis
-  ansible.builtin.apt:
-    name: redis-server
-    state: present
-Step 7: Start and Enable Redis Service
-Start and enable the Redis service:
+### 9. Display Redis service status:
+   - Following the status check, this step displays the status of the Redis service fetched from the previous step. It provides visibility into the current state of the Redis service.
 
-- name: Start and Enable Redis service
-  ansible.builtin.systemd:
-    name: redis-server
-    state: started
-    enabled: yes
-Step 8: Check Status of Redis Service
-Check the status of the Redis service:
-
-- name: Check Status of Redis Service
-  ansible.builtin.shell:
-    cmd: systemctl status redis-server.service
-  register: redis_service_status
-Step 9: Display Redis Service Status
-Display the status of the Redis service:
-
-- name: Display Redis service status
-  ansible.builtin.debug:
-    msg: "{{ redis_service_status.stdout }}"
-Step 10: Set Redis Package to Remain Fixed
-Set the Redis package to remain fixed at a specific version (e.g., v7.2.4) to disable auto-update:
-
-
-- name: Set Redis Package to Remain Fixed at v7.2.4 (Disable auto-update)
-  ansible.builtin.command:
-    cmd: echo "redis-server hold" | sudo dpkg --set-selections
-These tasks collectively ensure the installation of Redis on your system using Ansible.
-
-## Configuring Redis Sentinel with Ansible
-
-To configure Redis Sentinel using Ansible, follow these steps:
-
-### Step 1: Create the `tasks/sentinel.yml` File
-
-Create a YAML file named `sentinel.yml` within your Ansible playbook directory.
-
-### Step 2: Add Redis Sentinel Configuration Tasks
-
-Add the following tasks to the `sentinel.yml` file to configure Redis Sentinel:
-
-1. **Install Redis Sentinel**:
-   - Use Ansible's `apt` module to install the `redis-sentinel` package.
-   - Set the state to `present` to ensure the package is installed.
-
-2. **Enable Redis Sentinel service to start on boot**:
-   - Use Ansible's `service` module to enable the `redis-sentinel` service to start automatically on boot.
-   - Set `enabled: yes` to enable the service.
-
-3. **Start Redis Sentinel service**:
-   - Use Ansible's `service` module to start the `redis-sentinel` service.
-   - Set the state to `started` to ensure the service is running.
-
-4. **Check Redis Sentinel service status**:
-   - Use Ansible's `systemd` module to check the status of the `redis-sentinel` service.
-   - Set the state to `started` to retrieve the service status.
-
-5. **Update Redis package cache**:
-   - Use Ansible's `apt` module to update the Redis package cache.
-
-These tasks collectively ensure the proper installation and configuration of Redis Sentinel, along with updating the Redis package cache when necessary.
-
-## Configuring Redis Configuration File with Ansible
-
-To configure the Redis configuration file using Ansible, follow these steps:
-
-### Step 1: Check if `redis.conf` File Exists
-
-Use the `stat` module to check if the `redis.conf` file exists in the directory `/etc/redis/`.
-Register the result in the variable `redis_file_stat`.
-Delegate the task to the Redis master server.
-
-### Step 2: Store Current Block Content of `redis.conf`
-
-Use the `shell` module to fetch the current content of `redis.conf` using the `cat` command.
-Register the result in the variable `redis_block_content`.
-Execute this task when `redis_file_stat.stat.exists` is true.
-Delegate the task to the Redis master server.
-
-### Step 3: Uncomment and Edit Redis Configurations
-
-Use the `lineinfile` module to uncomment and edit specific Redis configurations in the `redis.conf` file.
-Loop through the configurations to be edited, such as `bind`, `requirepass`, and `masterauth`.
-Delegate the task to the Redis master server.
-
-### Step 4: Store the New Block Content of `redis.conf`
-
-Fetch the current content of `redis.conf` after modification and register it in `redis_blockinfile_result`.
-Delegate the task to the Redis master server.
-
-### Step 5: Backup Redis Configuration File
-
-Create a backup of the `redis.conf` file if its content has changed.
-Backup file names include the date and time of the backup.
-Conditionally execute this task when the content of `redis.conf` has changed.
-Delegate the task to the Redis master server.
-
-### Step 6: Restart Redis Service
-
-Use the `service` module to restart the `redis-server` service.
-Delegate the task to the Redis master server.
-
-These tasks collectively ensure the proper configuration of the Redis configuration file, including uncommenting and editing specific configurations as required.
-
-## Configuring Redis Configuration File on Redis Slave 01 with Ansible
-
-To configure the Redis configuration file on Redis Slave 01 using Ansible, follow these steps:
-
-### Step 1: Check if `redis.conf` File Exists on Redis Slave 01
-
-Use the `stat` module to check if the `redis.conf` file exists in the directory `/etc/redis/` on Redis Slave 01.
-Register the result in the variable `redis_file_stat`.
-Delegate the task to Redis Slave 01.
-
-### Step 2: Store Current Block Content of `redis.conf` on Redis Slave 01
-
-Use the `shell` module to fetch the current content of `redis.conf` using the `cat` command on Redis Slave 01.
-Register the result in the variable `redis_block_content`.
-Execute this task when `redis_file_stat.stat.exists` is true.
-Delegate the task to Redis Slave 01.
-
-### Step 3: Update Redis Configuration in `redis.conf` for Slave Nodes on Redis Slave 01
-
-Use the `lineinfile` module to update specific Redis configurations in the `redis.conf` file for slave nodes on Redis Slave 01.
-Loop through the configurations to be edited, such as `bind`, `requirepass`, `masterauth`, and `replicaof`.
-Delegate the task to Redis Slave 01.
-
-### Step 4: Store the New Block Content of `redis.conf` on Redis Slave 01
-
-Fetch the current content of `redis.conf` after modification and register it in `redis_blockinfile_result` on Redis Slave 01.
-Delegate the task to Redis Slave 01.
-
-### Step 5: Backup Redis Configuration File on Redis Slave 01
-
-Create a backup of the `redis.conf` file if its content has changed on Redis Slave 01.
-Backup file names include the date and time of the backup.
-Conditionally execute this task when the content of `redis.conf` has changed.
-Delegate the task to Redis Slave 01.
-
-### Step 6: Restart Redis Service on Redis Slave 01
-
-Use the `service` module to restart the `redis-server` service on Redis Slave 01.
-Delegate the task to Redis Slave 01.
-
-These tasks collectively ensure the proper configuration of the Redis configuration file on Redis Slave 01, including updating specific configurations for slave nodes.
-
-## Configuring Redis Configuration File on Redis Slave 02 with Ansible
-
-To configure the Redis configuration file on Redis Slave 02 using Ansible, follow these steps:
-
-### Step 1: Check if `redis.conf` File Exists on Redis Slave 02
-
-Use the `stat` module to check if the `redis.conf` file exists in the directory `/etc/redis/` on Redis Slave 02.
-Register the result in the variable `redis_file_stat`.
-Delegate the task to Redis Slave 01.
-
-### Step 2: Store Current Block Content of `redis.conf` on Redis Slave 02
-
-Use the `shell` module to fetch the current content of `redis.conf` using the `cat` command on Redis Slave 02.
-Register the result in the variable `redis_block_content`.
-Execute this task when `redis_file_stat.stat.exists` is true.
-Delegate the task to Redis Slave 01.
-
-### Step 3: Update Redis Configuration in `redis.conf` for Slave Nodes on Redis Slave 02
-
-Use the `lineinfile` module to update specific Redis configurations in the `redis.conf` file for slave nodes on Redis Slave 02.
-Loop through the configurations to be edited, such as `bind`, `requirepass`, `masterauth`, and `replicaof`.
-Delegate the task to Redis Slave 01.
-
-### Step 4: Store the New Block Content of `redis.conf` on Redis Slave 02
-
-Fetch the current content of `redis.conf` after modification and register it in `redis_blockinfile_result` on Redis Slave 01.
-Delegate the task to Redis Slave 01.
-
-### Step 5: Backup Redis Configuration File on Redis Slave 02
-
-Create a backup of the `redis.conf` file if its content has changed on Redis Slave 02.
-Backup file names include the date and time of the backup.
-Conditionally execute this task when the content of `redis.conf` has changed.
-Delegate the task to Redis Slave 01.
-
-### Step 6: Restart Redis Service on Redis Slave 02
-
-Use the `service` module to restart the `redis-server` service on Redis Slave 02.
-Delegate the task to Redis Slave 01.
-
-These tasks collectively ensure the proper configuration of the Redis configuration file on Redis Slave 02, including updating specific configurations for slave nodes.
-
-## Configuring Sentinel Configuration File for Redis with Ansible
-
-To configure the Sentinel configuration file for Redis using Ansible, follow these steps:
-
-### Step 1: Check if `sentinel.conf` File Exists
-
-Use the `stat` module to check if the `sentinel.conf` file exists in the directory `/etc/redis/`.
-Register the result in the variable `sentinel_file_stat`.
-
-### Step 2: Store Current Block Content of `sentinel.conf`
-
-Use the `shell` module to fetch the current content of `sentinel.conf` using the `cat` command.
-Register the result in the variable `sentinel_block_content`.
-Execute this task when `sentinel_file_stat.stat.exists` is true.
-
-### Step 3: Edit `sentinel.conf` File
-
-Use the `lineinfile` module to edit specific configurations in the `sentinel.conf` file.
-Loop through the configurations to be edited, such as `sentinel monitor`, `sentinel auth-pass`, `sentinel down-after-milliseconds`, `sentinel failover-timeout`, and `protected-mode`.
-
-### Step 4: Store the New Block Content of `sentinel.conf`
-
-Fetch the current content of `sentinel.conf` after modification and register it in `sentinel_blockinfile_result`.
-
-### Step 5: Backup Redis Configuration File
-
-Create a backup of the `sentinel.conf` file if its content has changed.
-Backup file names include the date and time of the backup.
-Conditionally execute this task when the content of `sentinel.conf` has changed.
-
-### Step 6: Restart Redis Service
-
-Use the `service` module to restart the `redis-server` service.
-
-These tasks collectively ensure the proper configuration of the Sentinel configuration file for Redis.
-
-
-
-
-
-
-
-
-
-
+### 10. Set Redis Package to Remain Fixed at v7.2.4 (Disable auto-update):
+    - Finally, this step ensures that the Redis package remains fixed at version 7.2.4 by setting it to "hold," which disables automatic updates for the Redis package. This ensures stability and prevents unexpected changes to the Redis version.
