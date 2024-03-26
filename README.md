@@ -175,6 +175,77 @@ This Ansible playbook automates the configuration of a Redis master instance by 
    - Finally, this step restarts the Redis service (`redis-server`) on the Redis master server using the `ansible.builtin.service` module. Restarting the service applies the new configuration settings.
 
 
+## Configuring Redis Slave 01
+
+This Ansible playbook automates the configuration of Redis Slave 01 by modifying its Redis configuration file (`redis.conf`). Below are the steps involved:
+
+### 1. Check if redis.conf file exists in Redis Slave 01:
+   - This step ensures the existence of the Redis configuration file (`/etc/redis/redis.conf`) on Redis Slave 01, delegated to the designated server (`redis_slave1`). The file is essential for configuring Redis server settings on the slave node.
+
+### 2. Store current block content of /etc/redis/redis.conf in Redis Slave 01:
+   - If the Redis configuration file exists on Redis Slave 01, this step retrieves its current content using the `ansible.builtin.shell` module. The content is stored for reference and potential modification.
+
+### 3. Update Redis configuration in redis.conf for slave nodes in Redis Slave 01:
+   - This step utilizes the `ansible.builtin.lineinfile` module to update specific configurations within the Redis configuration file (`/etc/redis/redis.conf`) on Redis Slave 01. It ensures essential configurations like binding IP, password requirements, and replication settings are appropriately set.
+
+### 4. Store the new block content of /etc/redis/redis.conf in Redis Slave 01:
+   - After modifying the Redis configuration file on Redis Slave 01, this step retrieves the updated content using the `ansible.builtin.shell` module. The updated content is stored for verification and backup purposes.
+
+### 5. Backup Redis configuration file in Redis Slave 01:
+   - If changes are made to the Redis configuration file on Redis Slave 01, this step creates a backup of the original configuration file (`/etc/redis/redis.conf`) with a timestamp appended to its filename. The backup ensures the ability to revert to the previous configuration if needed.
+
+### 6. Restart Redis service in Redis Slave 01:
+   - Finally, this step restarts the Redis service (`redis-server`) on Redis Slave 01 using the `ansible.builtin.service` module. Restarting the service applies the new configuration settings and ensures proper replication from the master node.
+
+## Configuring Redis Slave 02
+
+This Ansible playbook automates the configuration of Redis Slave 02 by modifying its Redis configuration file (`redis.conf`). Below are the steps involved:
+
+### 1. Check if redis.conf file exists in Redis Slave 02:
+   - This step ensures the existence of the Redis configuration file (`/etc/redis/redis.conf`) on Redis Slave 02, delegated to the designated server (`redis_slave1`). The file is essential for configuring Redis server settings on the slave node.
+
+### 2. Store current block content of /etc/redis/redis.conf in Redis Slave 02:
+   - If the Redis configuration file exists on Redis Slave 02, this step retrieves its current content using the `ansible.builtin.shell` module. The content is stored for reference and potential modification.
+
+### 3. Update Redis configuration in redis.conf for slave nodes in Redis Slave 02:
+   - This step utilizes the `ansible.builtin.lineinfile` module to update specific configurations within the Redis configuration file (`/etc/redis/redis.conf`) on Redis Slave 02. It ensures essential configurations like binding IP, password requirements, and replication settings are appropriately set.
+
+### 4. Store the new block content of /etc/redis/redis.conf in Redis Slave 02:
+   - After modifying the Redis configuration file on Redis Slave 02, this step retrieves the updated content using the `ansible.builtin.shell` module. The updated content is stored for verification and backup purposes.
+
+### 5. Backup Redis configuration file in Redis Slave 02:
+   - If changes are made to the Redis configuration file on Redis Slave 02, this step creates a backup of the original configuration file (`/etc/redis/redis.conf`) with a timestamp appended to its filename. The backup ensures the ability to revert to the previous configuration if needed.
+
+### 6. Restart Redis service in Redis Slave 02:
+   - Finally, this step restarts the Redis service (`redis-server`) on Redis Slave 02 using the `ansible.builtin.service` module. Restarting the service applies the new configuration settings and ensures proper replication from the master node.
+
+## Configuring Redis Sentinel
+
+This Ansible playbook automates the configuration of Redis Sentinel by modifying its configuration file (`sentinel.conf`). Below are the steps involved:
+
+### 1. Check if sentinel.conf file exists:
+   - This step ensures the existence of the Redis Sentinel configuration file (`/etc/redis/sentinel.conf`). The file is essential for configuring Redis Sentinel settings.
+
+### 2. Store current block content of /etc/redis/sentinel.conf:
+   - If the Redis Sentinel configuration file exists, this step retrieves its current content using the `ansible.builtin.shell` module. The content is stored for reference and potential modification.
+
+### 3. Edit sentinel.conf file:
+   - This step utilizes the `ansible.builtin.lineinfile` module to edit specific configurations within the Redis Sentinel configuration file (`/etc/redis/sentinel.conf`). It ensures essential configurations like monitoring master, authentication, failover settings, and protected mode are appropriately set.
+
+### 4. Store the new block content of /etc/redis/sentinel.conf:
+   - After modifying the Redis Sentinel configuration file, this step retrieves the updated content using the `ansible.builtin.shell` module. The updated content is stored for verification and backup purposes.
+
+### 5. Backup Redis configuration file:
+   - If changes are made to the Redis Sentinel configuration file, this step creates a backup of the original configuration file (`/etc/redis/sentinel.conf`) with a timestamp appended to its filename. The backup ensures the ability to revert to the previous configuration if needed.
+
+### 6. Restart Redis service:
+   - Finally, this step restarts the Redis service (`redis-server`) to apply the new configuration settings.
+
+
+
+
+
+
 
 
 
