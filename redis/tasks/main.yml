@@ -1,0 +1,24 @@
+---
+# Tasks file for setting up Redis
+
+- name: SetUp Proxy
+  include_tasks: proxy.yml
+
+- name: Install Redis
+  include_tasks: redis.yml
+
+- name: Install Redis Sentinel
+  include_tasks: sentinel.yml
+
+- name: Configure Redis on Master Node
+  include_tasks: masterconf.yml
+
+- name: Configure Redis on Replica Node (Slave01)
+  include_tasks: slave1conf.yml
+
+- name: Configure Redis on Replica Node (Slave02)
+  include_tasks: slave2conf.yml
+
+- name: Configure Redis Sentinel
+  include_tasks: sentinelconf.yml
+

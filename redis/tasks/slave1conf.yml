@@ -1,0 +1,49 @@
+- name: Check if redis.conf file exists in Redis Slave 01
+  ansible.builtin.stat:
+    path: /etc/redis/redis.conf
+  register: redis_file_stat
+  delegate_to: "{{ redis_slave1 }}"
+
+- name: Store current block content of /etc/redis/redis.conf in Redis Slave 01
+  ansible.builtin.shell:
+    cmd: cat /etc/redis/redis.conf
+  register: redis_block_content
+  when: redis_file_stat.stat.exists
+  delegate_to: "{{ redis_slave1 }}"
+
+- name: Update Redis configuration in redis.conf for slave nodes in Redis Slave 01
+  ansible.builtin.lineinfile:
+    path: /etc/redis/redis.conf
+    regexp: '^\s*#?\s*{{ item.regexp }}'
+    line: '{{ item.line }}'
+    state: present
+  loop:
+    - { regexp: 'bind', line: "bind 0.0.0.0" }
+    - { regexp: 'requirepass', line: "requirepass {{ redis_master_password }}" }
+    - { regexp: 'masterauth', line: "masterauth {{ redis_master_password }}" }
+    - { regexp: 'replicaof', line: "replicaof {{ redis_master }} {{ redis_port }}" }
+  delegate_to: "{{ redis_slave1 }}"
+
+- name: Store the new block content of /etc/redis/redis.conf in Redis Slave 01
+  ansible.builtin.shell:
+    cmd: cat /etc/redis/redis.conf
+  register: redis_blockinfile_result
+  delegate_to: "{{ redis_slave1 }}"
+
+- name: Backup Redis configuration file in Redis Slave 01
+  ansible.builtin.copy:
+    content: "{{ redis_block_content.stdout }}"
+    dest: "/etc/redis/redis.conf_{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}_{{ ansible_date_time.minute }}.bak"
+    remote_src: yes
+  when:
+    - redis_file_stat.stat.exists
+    - redis_block_content.stdout != redis_blockinfile_result.stdout
+  delegate_to: "{{ redis_slave1 }}"
+
+- name: Restart Redis service in Redis Slave 01
+  ansible.builtin.service:
+    name: redis-server
+    state: restarted
+  delegate_to: "{{ redis_slave1 }}"
+
+

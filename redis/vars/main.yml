@@ -1,0 +1,20 @@
+---
+# Proxy variables
+#
+PROXY_ADDRESS: "http://172.168.10.28:3128"
+
+# Redis master, slave hostname
+#
+redis_master: "172.31.81.82"
+
+redis_slave1: "172.31.28.179"
+
+redis_slave2: "172.31.34.174"
+
+# Default Redis Master password
+#
+redis_master_password: "redis@123"
+
+# Redis Port
+#
+redis_port: "6379"

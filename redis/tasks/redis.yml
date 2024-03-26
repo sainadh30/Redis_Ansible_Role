@@ -1,0 +1,50 @@
+---
+- name: Check if Redis Repository GPG Key file exists
+  ansible.builtin.stat:
+    path: /usr/share/keyrings/redis-archive-keyring.gpg
+  register: redis_key_stat
+
+- name: Add Redis Repository GPG Key
+  ansible.builtin.shell:
+    cmd: curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
+  when: not redis_key_stat.stat.exists
+
+- name: Check if Redis Repository file exists
+  ansible.builtin.stat:
+    path: /etc/apt/sources.list.d/redis.list
+  register: redis_repo_stat
+
+- name: Add Redis Repository to System
+  ansible.builtin.shell:
+    cmd: echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
+  when: not redis_repo_stat.stat.exists
+
+- name: Update Redis Repository
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install Redis
+  ansible.builtin.apt:
+    name: redis-server
+    state: present
+
+- name: Start and Enable Redis service
+  ansible.builtin.systemd:
+    name: redis-server
+    state: started
+    enabled: yes
+
+- name: Check Status of Redis Service
+  ansible.builtin.shell:
+    cmd: systemctl status redis-server.service
+  register: redis_service_status
+
+- name: Display Redis service status
+  ansible.builtin.debug:
+    msg: "{{ redis_service_status.stdout }}"
+
+- name: Set Redis Package to Remain Fixed at v7.2.4 (Disable auto-update)
+  ansible.builtin.command:
+    cmd: echo "redis-server hold" | sudo dpkg --set-selections
+
+

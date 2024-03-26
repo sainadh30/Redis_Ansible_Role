@@ -1,0 +1,124 @@
+---
+# Setting Proxy Environment variables
+- name: Check if Proxy.sh file exists
+  ansible.builtin.stat:
+    path: /etc/profile.d/proxy.sh
+  register: proxy_file_stat
+
+- name: Create proxy.sh file if does not exist
+  ansible.builtin.file:
+    path: /etc/profile.d/proxy.sh
+    state: touch
+  when: not proxy_file_stat.stat.exists
+
+- name: Store current block content of /etc/profile.d/proxy.sh
+  ansible.builtin.shell:
+    cmd: cat /etc/profile.d/proxy.sh
+  register: proxy_block_content
+  when: proxy_file_stat.stat.exists
+
+- name: Setting Proxy environmental variables
+  ansible.builtin.blockinfile:
+    path: /etc/profile.d/proxy.sh
+    block: |
+      # Setting Proxy Environment variables
+      export no_proxy="127.0.0.1,localhost"
+      export https_proxy="{{ PROXY_ADDRESS }}/"
+      export http_proxy="{{ PROXY_ADDRESS }}/"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+
+- name: Store the new block content of /etc/profile.d/proxy.sh
+  ansible.builtin.shell:
+    cmd: cat /etc/profile.d/proxy.sh
+  register: proxy_blockinfile_result
+
+- name: Back Up /etc/profile.d/proxy.sh file if content changes
+  ansible.builtin.copy:
+    content: "{{ proxy_block_content.stdout }}"
+    dest: "/etc/profile.d/proxy.sh_{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}_{{ ansible_date_time.minute }}.bkp"
+    remote_src: yes
+  when:
+    - proxy_file_stat.stat.exists
+    - proxy_block_content.stdout != proxy_blockinfile_result.stdout
+
+# Setting APT Proxy variables
+- name: Check if 80proxy file exists or not
+  ansible.builtin.stat:
+    path: /etc/apt/apt.conf.d/80proxy
+  register: proxy_80_file_stat
+
+- name: Create 80proxy file if does not exist
+  ansible.builtin.file:
+    path: /etc/apt/apt.conf.d/80proxy
+    state: touch
+  when: not proxy_80_file_stat.stat.exists
+
+- name: Store current block content of /etc/apt/apt.conf.d/80proxy
+  ansible.builtin.shell:
+    cmd: cat /etc/apt/apt.conf.d/80proxy
+  register: proxy_80_block_content
+  when: proxy_80_file_stat.stat.exists
+
+- name: Setting APT Proxy variables
+  ansible.builtin.blockinfile:
+    path: /etc/apt/apt.conf.d/80proxy
+    block: |
+      Acquire::http::proxy "http://{{ PROXY_ADDRESS }}/";
+      Acquire::https::proxy "http://{{ PROXY_ADDRESS }}/";
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+ 
+- name: Store the new block content of /etc/apt/apt.conf.d/80proxy
+  ansible.builtin.shell:
+    cmd: cat /etc/apt/apt.conf.d/80proxy
+  register: proxy_80_blockinfile_result
+
+- name: Back Up /etc/apt/apt.conf.d/80proxy file if content changes
+  ansible.builtin.copy:
+    content: "{{ proxy_80_block_content.stdout }}"
+    dest: "/etc/apt/apt.conf.d/80proxy_{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}_{{ ansible_date_time.minute }}.bkp"
+    remote_src: yes
+  when:
+    - proxy_80_file_stat.stat.exists
+    - proxy_80_block_content.stdout != proxy_80_blockinfile_result.stdout
+
+# Setting WGET Proxy variables
+- name: Check if wgetrc file exists or not
+  ansible.builtin.stat:
+    path: wgetrc
+  register: wgetrc_stat
+
+- name: Create wgetrc file if does not exist
+  ansible.builtin.file:
+    path: wgetrc
+    state: touch
+  when: not wgetrc_stat.stat.exists
+
+- name: Store current block content of wgetrc
+  ansible.builtin.shell:
+    cmd: cat wgetrc
+  register: wgetrc_block_content
+  when: wgetrc_stat.stat.exists
+
+- name: Setting WGET Proxy variables
+  ansible.builtin.blockinfile:
+    path: wgetrc
+    block: |
+      use_proxy = on
+      http_proxy = http://{{ PROXY_ADDRESS }}/
+      https_proxy = http://{{ PROXY_ADDRESS }}/
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+
+- name: Store the new block content of wgetrc
+  ansible.builtin.shell:
+    cmd: cat wgetrc
+  register: wgetrc_blockinfile_result
+
+- name: BackUP wgetrc file if content changes
+  ansible.builtin.copy:
+    content: "{{ wgetrc_block_content.stdout }}"
+    dest: "wgetrc_{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}_{{ ansible_date_time.minute }}.bkp"
+    remote_src: yes
+  when: 
+    - wgetrc_stat.stat.exists
+    - wgetrc_block_content.stdout != wgetrc_blockinfile_result.stdout
+

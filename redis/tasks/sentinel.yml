@@ -1,0 +1,23 @@
+- name: Install Redis Sentinel
+  ansible.builtin.apt:
+    name: redis-sentinel
+    state: present
+
+- name: Enable Redis Sentinel service to start on boot
+  ansible.builtin.service:
+    name: redis-sentinel
+    enabled: yes
+
+- name: Start Redis Sentinel service
+  ansible.builtin.service:
+    name: redis-sentinel
+    state: started
+
+- name: Check Redis Sentinel service status
+  ansible.builtin.systemd:
+    name: redis-sentinel
+    state: started
+
+- name: Update Redis package cache
+  ansible.builtin.apt:
+    update_cache: yes
