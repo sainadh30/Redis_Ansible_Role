@@ -181,6 +181,49 @@ Add the following tasks to the `sentinel.yml` file to configure Redis Sentinel:
 
 These tasks collectively ensure the proper installation and configuration of Redis Sentinel, along with updating the Redis package cache when necessary.
 
+## Configuring Redis Configuration File with Ansible
+
+To configure the Redis configuration file using Ansible, follow these steps:
+
+### Step 1: Check if `redis.conf` File Exists
+
+Use the `stat` module to check if the `redis.conf` file exists in the directory `/etc/redis/`.
+Register the result in the variable `redis_file_stat`.
+Delegate the task to the Redis master server.
+
+### Step 2: Store Current Block Content of `redis.conf`
+
+Use the `shell` module to fetch the current content of `redis.conf` using the `cat` command.
+Register the result in the variable `redis_block_content`.
+Execute this task when `redis_file_stat.stat.exists` is true.
+Delegate the task to the Redis master server.
+
+### Step 3: Uncomment and Edit Redis Configurations
+
+Use the `lineinfile` module to uncomment and edit specific Redis configurations in the `redis.conf` file.
+Loop through the configurations to be edited, such as `bind`, `requirepass`, and `masterauth`.
+Delegate the task to the Redis master server.
+
+### Step 4: Store the New Block Content of `redis.conf`
+
+Fetch the current content of `redis.conf` after modification and register it in `redis_blockinfile_result`.
+Delegate the task to the Redis master server.
+
+### Step 5: Backup Redis Configuration File
+
+Create a backup of the `redis.conf` file if its content has changed.
+Backup file names include the date and time of the backup.
+Conditionally execute this task when the content of `redis.conf` has changed.
+Delegate the task to the Redis master server.
+
+### Step 6: Restart Redis Service
+
+Use the `service` module to restart the `redis-server` service.
+Delegate the task to the Redis master server.
+
+These tasks collectively ensure the proper configuration of the Redis configuration file, including uncommenting and editing specific configurations as required.
+
+
 
 
 
