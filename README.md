@@ -152,16 +152,6 @@ This Ansible playbook automates the installation and configuration of Redis Sent
 ### 5. Update Redis package cache:
    - Finally, this step updates the package cache for Redis using the `ansible.builtin.apt` module with the `update_cache` option set to `yes`. Updating the package cache ensures that the latest information about available Redis packages is fetched from the repositories.
 
-## How to Use:
-1. **Prerequisites:**
-   - Ensure Ansible is installed on the control node.
 
-2. **Steps:**
-   - Copy the playbook containing the tasks into an Ansible playbook file.
-   - Run the playbook using the command `ansible-playbook <playbook_filename>`.
-
-## Note:
-- This playbook streamlines the installation and configuration of Redis Sentinel, enhancing the reliability and availability of Redis instances.
-- Users may need to customize the playbook according to their specific environment or configuration requirements.
 
 
