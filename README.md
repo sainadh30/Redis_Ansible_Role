@@ -274,17 +274,17 @@ AUTH <YOUR_PASSWORD>
 GET hello
 ```
 
-## Run Redis CLI to connect to the Redis Sentinel server.
+## 8.Run Redis CLI to connect to the Redis Sentinel server.
 ```
 redis-cli -p 26379
 ```
 
-## Run INFO command to check the Redis replication information.
+## 9.Run INFO command to check the Redis replication information.
 ```
 INFO SENTINEL
 ```
 
-## Check the log of Redis Sentinel.
+## 10.Check the log of Redis Sentinel.
 ```
 tail -f /var/log/redis/redis-sentinel.log
 ```
