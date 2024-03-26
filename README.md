@@ -243,13 +243,56 @@ This Ansible playbook automates the configuration of Redis Sentinel by modifying
 
 # Validation
 
-## Run Redis CLI to connect to the Redis server.
-```bash
+## 1.Run Redis CLI to connect to the Redis server.
+```
 redis-cli
 ```
-## Run AUTH command to authenticate. Change <YOUR_PASSWORD> to the same password on master node.
-```bash
+## 2.Run AUTH command to authenticate. Change <YOUR_PASSWORD> to the same password on master node.
+```
 AUTH <YOUR_PASSWORD>
+```
+
+## 3.Run INFO command to check the Redis replication information.
+```
+INFO REPLICATION
+```
+
+## 4.Run SET command to set a key hello to world on the master node.
+```
+SET hello world
+```
+
+## 5.Connect to your redis replica server.
+```
+redis-cli
+```
+
+## 6.Run AUTH command to authenticate. Change <YOUR_PASSWORD> to the same password on the master node.
+```
+AUTH <YOUR_PASSWORD>
+```
+
+## 7.Run GET command to get the value of key hello. The result is world shows that the replication from master to replica works successfully.
+```
+GET hello
+```
+
+## Run Redis CLI to connect to the Redis Sentinel server.
+```
+redis-cli -p 26379
+```
+
+## Run INFO command to check the Redis replication information.
+```
+INFO SENTINEL
+```
+
+## Check the log of Redis Sentinel.
+```
+tail -f /var/log/redis/redis-sentinel.log
+```
+
+
 
 
 
