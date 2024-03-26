@@ -244,7 +244,7 @@ This Ansible playbook automates the configuration of Redis Sentinel by modifying
 # Validation
 
 ## Run Redis CLI to connect to the Redis server.
-```
+```bash
 redis-cli
 ```
 ## Run AUTH command to authenticate. Change <YOUR_PASSWORD> to the same password on master node.
