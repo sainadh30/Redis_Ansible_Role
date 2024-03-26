@@ -223,6 +223,49 @@ Delegate the task to the Redis master server.
 
 These tasks collectively ensure the proper configuration of the Redis configuration file, including uncommenting and editing specific configurations as required.
 
+## Configuring Redis Configuration File on Redis Slave 01 with Ansible
+
+To configure the Redis configuration file on Redis Slave 01 using Ansible, follow these steps:
+
+### Step 1: Check if `redis.conf` File Exists on Redis Slave 01
+
+Use the `stat` module to check if the `redis.conf` file exists in the directory `/etc/redis/` on Redis Slave 01.
+Register the result in the variable `redis_file_stat`.
+Delegate the task to Redis Slave 01.
+
+### Step 2: Store Current Block Content of `redis.conf` on Redis Slave 01
+
+Use the `shell` module to fetch the current content of `redis.conf` using the `cat` command on Redis Slave 01.
+Register the result in the variable `redis_block_content`.
+Execute this task when `redis_file_stat.stat.exists` is true.
+Delegate the task to Redis Slave 01.
+
+### Step 3: Update Redis Configuration in `redis.conf` for Slave Nodes on Redis Slave 01
+
+Use the `lineinfile` module to update specific Redis configurations in the `redis.conf` file for slave nodes on Redis Slave 01.
+Loop through the configurations to be edited, such as `bind`, `requirepass`, `masterauth`, and `replicaof`.
+Delegate the task to Redis Slave 01.
+
+### Step 4: Store the New Block Content of `redis.conf` on Redis Slave 01
+
+Fetch the current content of `redis.conf` after modification and register it in `redis_blockinfile_result` on Redis Slave 01.
+Delegate the task to Redis Slave 01.
+
+### Step 5: Backup Redis Configuration File on Redis Slave 01
+
+Create a backup of the `redis.conf` file if its content has changed on Redis Slave 01.
+Backup file names include the date and time of the backup.
+Conditionally execute this task when the content of `redis.conf` has changed.
+Delegate the task to Redis Slave 01.
+
+### Step 6: Restart Redis Service on Redis Slave 01
+
+Use the `service` module to restart the `redis-server` service on Redis Slave 01.
+Delegate the task to Redis Slave 01.
+
+These tasks collectively ensure the proper configuration of the Redis configuration file on Redis Slave 01, including updating specific configurations for slave nodes.
+
+
 
 
 
