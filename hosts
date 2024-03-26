@@ -1,0 +1,5 @@
+[redis]
+redis_master ansible_host=172.31.81.82
+redis_slave1 ansible_host=172.31.28.179
+redis_slave2 ansible_host=172.31.34.174
+
